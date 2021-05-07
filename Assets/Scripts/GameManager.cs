@@ -63,7 +63,12 @@ public class GameManager : MonoBehaviour
             RespawnBlocks();
             
         }
-        if(CheckGameover()) {Gameover.gameObject.SetActive(true);}
+        if(CheckGameover()) 
+        {
+            Gameover.gameObject.SetActive(true);
+            
+        }
+    
       
     }
 
