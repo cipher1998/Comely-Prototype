@@ -27,10 +27,10 @@ public class GameManager : MonoBehaviour
     {
         Gridcubes = new GridCube [Size, Size];
         Create2Darray(Gridcubes1 , 0);
-        Create2Darray(Gridcubes2 , 0);
-        Create2Darray(Gridcubes3 , 0);
-        Create2Darray(Gridcubes4 , 0);
-        Create2Darray(Gridcubes5 , 0);
+        Create2Darray(Gridcubes2 , 1);
+        Create2Darray(Gridcubes3 , 2);
+        Create2Darray(Gridcubes4 , 3);
+        Create2Darray(Gridcubes5 , 4);
     }
 
     private void Create2Darray(GridCube[] gridcubes, int v)
@@ -63,13 +63,13 @@ public class GameManager : MonoBehaviour
             RespawnBlocks();
             
         }
-        //if(CheckGameover()) {Gameover.gameObject.SetActive(true);}
+        if(CheckGameover()) {Gameover.gameObject.SetActive(true);}
       
     }
 
     private bool CheckGameover()
     {
-        bool status = false;
+        bool status = true;
         for(int i=0; i< SpawnedBlocks.Count; i++)
         {
             GameObject spawnblock = SpawnedBlocks[i];
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
                 return false;
             }
         }
-        if(SpawnedBlocks.Count==0) {return false;}
+       if(SpawnedBlocks.Count==0) {return false;}
         return true;
     }
 
@@ -89,47 +89,58 @@ public class GameManager : MonoBehaviour
         Vector3 firstchild = spawnblock.transform.GetChild(0).position;
         for(int i=0;i<Size; i++)
         {
-            for(int j=0;j<Size;j++)
+            for(int j=0;j<Size; j++)
             {
                 foreach(Transform childs in spawnblock.transform)
                 {
-                    Vector3 diff = firstchild-childs.position;
-                    try
-                    {
-                      GameObject g=  Gridcubes[i+(int)diff.z, j- (int)diff.x].gameObject;
-                       
-                    }
-                    
-                    catch ( IndexOutOfRangeException e)
-                    {
-                        print("e");
-                        status=false;
-                        break;
-                        
-                        
-                    }
-                    catch ( NullReferenceException n)
-                    {
-                        print("n");
-                        status=false;
-                        break;
-                        
-                    }
-                    
-                   if(!Gridcubes[i+(int)diff.z, j- (int)diff.x].Isoccupied)
-                    {
-                        status= true;
-                    }
-                    else
-                    {
-                        status = false;
-                        break;
-                    }   
+                   bool trycatch= false;
+                   Vector3 diff= firstchild - childs.position;
+                   trycatch =TryCatchBlock(diff , i , j);
+                   if(trycatch)
+                   {
+                       if(!Gridcubes[i+(int)diff.z, j -(int)diff.x].Isoccupied)
+                       {
+                           status =true;
+                       }
+                       else
+                       {
+                           status= false;
+                           break;
+                       }
+                   } 
+                   else
+                   {
+                       status = false;
+                       break;
+                   }               
                 }
-                if(status) { return true;}   
+                if(status)
+                {
+                    return true;
+                }
+                
             }
         }
         return false;
+    }
+
+    private bool TryCatchBlock( Vector3 diff , int i, int j)
+    {
+        try
+        {
+            GameObject g = Gridcubes[i+(int)diff.z, j -(int)diff.x].gameObject;
+            return true;
+        }
+        catch(IndexOutOfRangeException e)
+        {
+            print($"{i+(int)diff.z}, {j -(int)diff.x}");
+            return false;
+        }
+        catch(NullReferenceException n)
+        {
+          print($"{i+(int)diff.z}, {j -(int)diff.x}");
+            return false;
+        }
     }
 
     private void CheckLine()
@@ -162,3 +173,9 @@ public class GameManager : MonoBehaviour
         }
     }
 }
+
+
+
+
+
+
